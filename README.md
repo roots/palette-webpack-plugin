@@ -86,7 +86,7 @@ mix.palette(options);
 |:-----------------:	|:-----------:	|:----------------------------------:	|------------------------------------------------------------------------------------------------------	|
 |      `output`     	|  `{String}` 	|          `'palette.json'`          	| The filename and path relative to the public path.                                                   	|
 |    `blacklist`    	|  `{Array}`  	|     `['transparent, 'inherit']`    	| Globs to ignore colors.                                                                              	|
-|     `priority`    	|  `{String}` 	|            `'tailwind'`            	| Priority when merging non-unique colors while using both Tailwind and Sass                           	|
+|     `priority`    	|  `{String}` 	|            `'tailwind'`            	| Priority when merging non-unique colors while using both Tailwind and Sass.                           	|
 |      `pretty`     	| `{Boolean}` 	|               `false`              	| Use pretty formatting when writing the JSON file.                                                    	|
 |     `tailwind`    	|  `{Object}` 	|              `{ ... }`             	| Set Tailwind options. (See below)                                                                    	|
 | `tailwind.config` 	|  `{String}` 	|      `'./tailwind.config.js'`      	| Path to the Tailwind configuration file relative to the project root path.                           	|
@@ -100,7 +100,9 @@ mix.palette(options);
 
 #### Vanilla WordPress
 
-The general idea is to `file_get_contents()` and `json_decode()` the palette and pass it to `add_theme_support('editor-color-palette', $palette)`
+The general idea is to [`file_get_contents()`](https://www.php.net/manual/en/function.file-get-contents.php) and [`json_decode()`](https://www.php.net/manual/en/function.json-decode.php) the palette and pass it to `add_theme_support('editor-color-palette', $palette)`.
+
+Here is an example of doing that:
 
 ```php
 /**
@@ -119,7 +121,7 @@ add_action('after_setup_theme', function () {
 
 #### Sage 10
 
-When using using Sage 10, you can take advantage of the `asset()` helper to fetch the palette. A good place for doing this would be in `setup.php` with the other `add_theme_support()` options.                  
+When using Sage 10, you can take advantage of the `asset()` helper to fetch the palette. A good place for doing this would be in `setup.php` with the other `add_theme_support()` options.                  
 
 ```php
 /**
@@ -145,7 +147,7 @@ $colors: (
 );
 ```
 
-would become:
+would be transformed to:
 
 ```json
 [
