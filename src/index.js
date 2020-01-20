@@ -248,7 +248,19 @@ class PaletteWebpackPlugin {
    */
   maybeGrayscale(color) {
     const { h, s, v } = d3Hsv(color);
+    /*
+      HSV is a cylinder where the central vertical axis comprises
+      the neutral, achromatic, or gray colors.
+      (image: https://w.wiki/Fsg)
 
+      Let's build a curve to find colors that look like grayscale...
+
+      v = 1.3/(1+8.5*s)
+      https://www.wolframalpha.com/input/?i=plot+v+%3D+1.3%2F%281%2B8.5*s%29+from+v%3D0+to+1+and+s%3D0+to+1
+
+      Good enough for government work. Now let's see if the value
+      falls below the curve
+    */
     return v < 1.3 / (1 + 8.5 * s);
   }
 }
