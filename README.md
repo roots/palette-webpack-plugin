@@ -57,7 +57,7 @@ If you are using [Laravel Mix](https://laravel-mix.com), you may use the Mix hel
 
 ```js
 const mix = require('laravel-mix');
-const palette = require('palette-webpack-plugin/src/mix');
+require('palette-webpack-plugin/src/mix');
 
 mix.palette({ ... });
 ```
