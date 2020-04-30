@@ -1,12 +1,59 @@
-# Palette Webpack Plugin
+<p align="center">
+  <a href="https://roots.io">
+    <img alt="Palette Webpack Plugin" src="https://cdn.roots.io/app/uploads/logo-roots.svg" width="150">
+  </a>
+</p>
 
-![Package Version](https://img.shields.io/npm/v/palette-webpack-plugin)
-![Total Downloads](https://img.shields.io/npm/dt/palette-webpack-plugin)
-![Build Status](https://img.shields.io/circleci/build/github/roots/palette-webpack-plugin?style=flat-square)
+<p align="center">
+  <a href="LICENSE.md">
+    <img alt="MIT License" src="https://img.shields.io/github/license/roots/palette-webpack-plugin?color=%23525ddc&style=flat-square" />
+  </a>
 
-This plugin allows you to generate a `JSON` file during the build process containing your color palette from existing [Sass maps](https://sass-lang.com/documentation/values/maps) and/or [Tailwind](https://tailwindcss.com).
+  <a href="https://www.npmjs.com/package/palette-webpack-plugin">
+    <img alt="Version" src="https://img.shields.io/npm/v/palette-webpack-plugin?style=flat-square" />
+  </a>
 
-While I hope someone may find this useful for other purposes, this plugin and it's output format were specifically built for handling WordPress' Gutenberg [`editor-color-palette`](https://developer.wordpress.org/block-editor/developers/themes/theme-support/) theme support feature.
+  <a href="https://www.npmjs.com/package/palette-webpack-plugin">
+    <img alt="Total Downloads" src="https://img.shields.io/npm/dt/palette-webpack-plugin?style=flat-square" />
+  </a>
+
+   <a href="https://circleci.com/gh/roots/palette-webpack-plugin/">
+    <img alt="Build Status" src="https://img.shields.io/circleci/build/github/roots/palette-webpack-plugin?style=flat-square" />
+  </a>
+
+  <a href="https://twitter.com/rootswp">
+    <img alt="Follow Roots" src="https://img.shields.io/twitter/follow/rootswp.svg?style=flat-square&color=1da1f2" />
+  </a>
+</p>
+
+<p align="center">
+  <strong>Automatic Color Palette Generation</strong>
+  <br />
+  Built with ❤️
+</p>
+
+<p align="center">
+  <a href="https://roots.io">Official Website</a> | <a href="https://www.patreon.com/rootsdev">Donate</a>
+</p>
+
+## Supporting
+
+Palette Webpack Plugin is an open source project and completely free to use.
+
+However, the amount of effort needed to maintain and develop new features and products within the Roots ecosystem is not sustainable without proper financial backing. If you have the capability, please consider donating using the links below:
+
+<div align="center">
+
+[![Donate via Patreon](https://img.shields.io/badge/donate-patreon-orange.svg?style=flat-square&logo=patreon)](https://www.patreon.com/rootsdev)
+[![Donate via PayPal](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&logo=paypal)](https://www.paypal.me/rootsdev)
+
+</div>
+
+## Overview
+
+Palette Webpack Plugin allows you to generate a `JSON` file during the build process containing your color palette from existing [Sass maps](https://sass-lang.com/documentation/values/maps) and/or [Tailwind](https://tailwindcss.com).
+
+While we hope someone may find this useful for other purposes, this plugin and it's output format were specifically built for handling WordPress' Gutenberg [`editor-color-palette`](https://developer.wordpress.org/block-editor/developers/themes/theme-support/) theme support feature.
 
 ## Features
 
