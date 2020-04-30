@@ -3,12 +3,12 @@ version: 2.1
 orbs:
   package:
     executors:
-      node-10:
+      node-11:
         docker:
-          - image: 'circleci/node:10-stretch'
+          - image: 'circleci/node:11-stretch'
     jobs:
       build-node:
-        executor: node-10
+        executor: node-11
         steps:
           - run: yarn versions
           - checkout
