@@ -86,7 +86,8 @@ module.exports = {
       pretty: false,
       tailwind: {
         config: './tailwind.config.js',
-        shades: false
+        shades: false,
+        path: 'colors'
       },
       sass: {
         path: 'resources/assets/styles/config',
@@ -138,6 +139,7 @@ mix.palette(options);
 |     `tailwind`    	|  `{Object}` 	|              `{ ... }`             	| Set Tailwind options. (See below)                                                                    	|
 | `tailwind.config` 	|  `{String}` 	|      `'./tailwind.config.js'`      	| Path to the Tailwind configuration file relative to the project root path.                           	|
 | `tailwind.shades` 	| `{Boolean}` 	|               `false`              	| While set to `true`, every color shade (`100-900`) will be generated. Otherwise, only `500` is used. 	|
+| `tailwind.path` 	| `{String}` 	|               `'colors'`              	| Path to Tailwind config values for palette colors in dot notation. Uses Tailwind's color palette `theme('colors')` per default. 	|
 |       `sass`      	|  `{Object}` 	|              `{ ... }`             	| Set Sass options. (See below)                                                                        	|
 |    `sass.path`    	|  `{String}` 	| `'resources/assets/styles/config'` 	| Path to Sass variable files relative to the project root path.                                       	|
 |    `sass.files`   	|  `{Array}`  	|        `['variables.scss']`        	| An array of files to search for the defined Sass variables.                                          	|

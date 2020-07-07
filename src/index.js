@@ -19,7 +19,8 @@ class PaletteWebpackPlugin {
       pretty: false,
       tailwind: {
         config: './tailwind.config.js',
-        shades: false
+        shades: false,
+        path: 'colors'
       },
       sass: {
         path: 'resources/assets/styles/config',
@@ -135,9 +136,15 @@ class PaletteWebpackPlugin {
       return [];
     }
 
-    this.tailwind = require('tailwindcss/resolveConfig')(
+    const config = require('tailwindcss/resolveConfig')(
       require(path.resolve(this.options.tailwind.config))
-    ).theme.colors;
+    );
+
+    this.tailwind = _.get(
+      config,
+      `theme.${this.options.tailwind.path || 'colors'}`,
+      {}
+    );
 
     return Object.keys(this.tailwind)
       .flatMap(key => {
@@ -248,7 +255,7 @@ class PaletteWebpackPlugin {
    */
   maybeGrayscale(color) {
     const { h, s, v } = d3Hsv(color);
-    
+
     /**
      * HSV is a cylinder where the central vertical axis comprises
      * the neutral, achromatic, or gray colors.
