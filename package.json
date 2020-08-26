@@ -1,6 +1,6 @@
 {
   "name": "palette-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate a JSON file containing your color palette from existing Sass maps and/or Tailwind.",
   "author": "Brandon Nifong <brandon@tendency.me>",
   "contributors": [
