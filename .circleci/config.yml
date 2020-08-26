@@ -5,10 +5,10 @@ orbs:
     executors:
       node-11:
         docker:
-          - image: 'circleci/node:11-stretch'
+          - image: "circleci/node:12-stretch"
     jobs:
       build-node:
-        executor: node-11
+        executor: node-12
         steps:
           - run: yarn versions
           - checkout

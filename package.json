@@ -20,7 +20,7 @@
   ],
   "main": "src/index.js",
   "engines": {
-    "node": ">=11.0.0"
+    "node": ">=12.0.0"
   },
   "scripts": {
     "test": "eslint src/ --max-warnings=0"
