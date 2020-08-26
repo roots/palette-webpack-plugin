@@ -20,7 +20,7 @@ class PaletteWebpackPlugin {
       tailwind: {
         config: './tailwind.config.js',
         shades: false,
-        path: 'colors'
+        path: 'colors'      
       },
       sass: {
         path: 'resources/assets/styles/config',
@@ -152,8 +152,14 @@ class PaletteWebpackPlugin {
           return;
         }
 
-        if (typeof this.tailwind[key] === 'string') {
+        if (_.isString(this.tailwind[key])) {
           return this.transform(key);
+        }
+
+        if (_.isArray(this.options.tailwind.shades)) {
+          return Object.keys(this.tailwind[key])
+            .filter(value => this.options.tailwind.shades.includes(value))
+            .map(value => this.transform(key, value));
         }
 
         if (
@@ -163,9 +169,7 @@ class PaletteWebpackPlugin {
           return this.transform(key, '500');
         }
 
-        return Object.keys(this.tailwind[key]).map(value => {
-          return this.transform(key, value);
-        });
+        return Object.keys(this.tailwind[key]).map(value => this.transform(key, value));
       })
       .filter(value => !!value);
   }
