@@ -20,7 +20,7 @@ class PaletteWebpackPlugin {
       tailwind: {
         config: './tailwind.config.js',
         shades: false,
-        path: 'colors'      
+        path: 'colors'
       },
       sass: {
         path: 'resources/assets/styles/config',
