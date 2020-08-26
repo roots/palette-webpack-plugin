@@ -156,17 +156,17 @@ class PaletteWebpackPlugin {
           return this.transform(key);
         }
 
-        if (_.isArray(this.options.tailwind.shades)) {
-          return Object.keys(this.tailwind[key])
-            .filter(value => this.options.tailwind.shades.includes(value))
-            .map(value => this.transform(key, value));
-        }
-
         if (
           !this.options.tailwind.shades &&
           this.tailwind[key].hasOwnProperty('500')
         ) {
           return this.transform(key, '500');
+        }
+      
+        if (_.isArray(this.options.tailwind.shades)) {
+          return Object.keys(this.tailwind[key])
+            .filter(value => this.options.tailwind.shades.includes(value))
+            .map(value => this.transform(key, value));
         }
 
         return Object.keys(this.tailwind[key]).map(value => this.transform(key, value));
