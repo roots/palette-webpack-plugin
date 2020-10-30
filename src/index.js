@@ -1,9 +1,9 @@
-const path = require('path');
-const fs = require('fs');
-const _ = require('lodash');
+const path = require("path");
+const fs = require("fs");
+const _ = require("lodash");
 
-const { color: d3Color } = require('d3-color');
-const { hsv: d3Hsv } = require('d3-hsv');
+const { color: d3Color } = require("d3-color");
+const { hsv: d3Hsv } = require("d3-hsv");
 
 class PaletteWebpackPlugin {
   /**
@@ -12,24 +12,27 @@ class PaletteWebpackPlugin {
    * @param {Object} options
    */
   constructor(options) {
-    this.options = _.merge({
-      output: 'palette.json',
-      blacklist: ['transparent', 'inherit'],
-      priority: 'tailwind',
-      pretty: false,
-      tailwind: {
-        config: './tailwind.config.js',
-        shades: false,
-        path: 'colors'
+    this.options = _.merge(
+      {
+        output: "palette.json",
+        blacklist: ["transparent", "inherit"],
+        priority: "tailwind",
+        pretty: false,
+        tailwind: {
+          config: "./tailwind.config.js",
+          shades: false,
+          path: "colors",
+        },
+        sass: {
+          path: "resources/assets/styles/config",
+          files: ["variables.scss"],
+          variables: ["colors"],
+        },
       },
-      sass: {
-        path: 'resources/assets/styles/config',
-        files: ['variables.scss'],
-        variables: ['colors']
-      }
-    }, options || {});
+      options || {}
+    );
 
-    this.palette = this.options.priority.includes('tailwind')
+    this.palette = this.options.priority.includes("tailwind")
       ? this.build(this.tailwind(), this.sass())
       : this.build(this.sass(), this.tailwind());
   }
@@ -47,20 +50,23 @@ class PaletteWebpackPlugin {
     );
 
     if (compiler.hooks) {
-      compiler.hooks.emit.tapAsync(this.constructor.name, (compilation, callback) => {
-        Object.assign(compilation.assets, {
-          [this.options.output]: {
-            source() {
-              return palette;
+      compiler.hooks.emit.tapAsync(
+        this.constructor.name,
+        (compilation, callback) => {
+          Object.assign(compilation.assets, {
+            [this.options.output]: {
+              source() {
+                return palette;
+              },
+              size() {
+                return palette.length;
+              },
             },
-            size() {
-              return palette.length;
-            }
-          }
-        });
+          });
 
-        callback();
-      });
+          callback();
+        }
+      );
     }
   }
 
@@ -72,21 +78,25 @@ class PaletteWebpackPlugin {
    * @param {Object} objects
    */
   build(...objects) {
-    const collection = _.uniqBy(
-      _.union(...objects),
-      'name'
-    );
+    const collection = _.uniqBy(_.union(...objects), "name");
 
-    const [colors, maybeColors] = _.partition(collection, value => !!d3Color(value.color));
-    const [falsePositives, notColors] = _.partition(maybeColors, value =>
+    const [colors, maybeColors] = _.partition(
+      collection,
+      (value) => !!d3Color(value.color)
+    );
+    const [falsePositives, notColors] = _.partition(maybeColors, (value) =>
       /^(?:rgb|hsl)a?\(.+?\)$/i.test(value.color)
     );
-    const [grayscale, notGrayscale] = _.partition(colors, value => this.isGrayscale(value.color) || this.maybeGrayscale(value.color));
+    const [grayscale, notGrayscale] = _.partition(
+      colors,
+      (value) =>
+        this.isGrayscale(value.color) || this.maybeGrayscale(value.color)
+    );
 
     return [
       [...notGrayscale, ...falsePositives, ...notColors],
-      grayscale
-    ].flatMap(color => _.sortBy(color, 'name'));
+      grayscale,
+    ].flatMap((color) => _.sortBy(color, "name"));
   }
 
   /**
@@ -98,14 +108,14 @@ class PaletteWebpackPlugin {
     }
 
     const paths = this.options.sass.path
-      ? _.endsWith('/', this.options.sass.path)
+      ? _.endsWith("/", this.options.sass.path)
         ? this.options.sass.path
-        : [this.options.sass.path, '/'].join('')
+        : [this.options.sass.path, "/"].join("")
       : null;
 
-    const files = [this.options.sass.files].map(file => {
-      if (this.exists([paths, file].join(''))) {
-        return [paths, file].join('');
+    const files = [this.options.sass.files].map((file) => {
+      if (this.exists([paths, file].join(""))) {
+        return [paths, file].join("");
       }
     });
 
@@ -113,19 +123,28 @@ class PaletteWebpackPlugin {
       return;
     }
 
-    const variables = require('sass-export').exporter({ inputFiles: files }).getArray();
+    const variables = require("sass-export")
+      .exporter({ inputFiles: files })
+      .getArray();
 
     if (!variables.length) {
       return;
     }
 
-    return variables.filter(key =>
-      [this.options.sass.variables].some(
-        value => key.name === (_.startsWith(value, '$') ? value : ['$', value].join(''))
-      ) && key.mapValue
-    ).flatMap(colors =>
-      colors.mapValue.map(color => this.transform(color.name, color.compiledValue, true))
-    );
+    return variables
+      .filter(
+        (key) =>
+          [this.options.sass.variables].some(
+            (value) =>
+              key.name ===
+              (_.startsWith(value, "$") ? value : ["$", value].join(""))
+          ) && key.mapValue
+      )
+      .flatMap((colors) =>
+        colors.mapValue.map((color) =>
+          this.transform(color.name, color.compiledValue, true)
+        )
+      );
   }
 
   /**
@@ -136,18 +155,18 @@ class PaletteWebpackPlugin {
       return [];
     }
 
-    const config = require('tailwindcss/resolveConfig')(
+    const config = require("tailwindcss/resolveConfig")(
       require(path.resolve(this.options.tailwind.config))
     );
 
     this.tailwind = _.get(
       config,
-      `theme.${this.options.tailwind.path || 'colors'}`,
+      `theme.${this.options.tailwind.path || "colors"}`,
       {}
     );
 
     return Object.keys(this.tailwind)
-      .flatMap(key => {
+      .flatMap((key) => {
         if (!key || this.options.blacklist.includes(key)) {
           return;
         }
@@ -158,20 +177,27 @@ class PaletteWebpackPlugin {
 
         if (
           !this.options.tailwind.shades &&
-          this.tailwind[key].hasOwnProperty('500')
+          this.tailwind[key].hasOwnProperty("500")
         ) {
-          return this.transform(key, '500');
-        }
-      
-        if (_.isArray(this.options.tailwind.shades)) {
-          return Object.keys(this.tailwind[key])
-            .filter(value => this.options.tailwind.shades.includes(value))
-            .map(value => this.transform(key, value));
+          return this.transform(key, "500");
         }
 
-        return Object.keys(this.tailwind[key]).map(value => this.transform(key, value));
+        if (
+          _.isArray(this.options.tailwind.shades) ||
+          _.isObject(this.options.tailwind.shades)
+        ) {
+          return Object.keys(this.tailwind[key])
+            .filter((value) =>
+              Object.keys(this.options.tailwind.shades).includes(value)
+            )
+            .map((value) => this.transform(key, value));
+        }
+
+        return Object.keys(this.tailwind[key]).map((value) =>
+          this.transform(key, value)
+        );
       })
-      .filter(value => !!value);
+      .filter((value) => !!value);
   }
 
   /**
@@ -186,7 +212,7 @@ class PaletteWebpackPlugin {
       return {
         name: this.title(key),
         slug: key,
-        color: value
+        color: value,
       };
     }
 
@@ -194,7 +220,7 @@ class PaletteWebpackPlugin {
       return {
         name: this.title(key),
         slug: key,
-        color: this.tailwind[key]
+        color: this.tailwind[key],
       };
     }
 
@@ -205,7 +231,7 @@ class PaletteWebpackPlugin {
         ? this.title(key, value)
         : this.title(key),
       slug: `${key}-${value}`,
-      color: this.tailwind[key][value]
+      color: this.tailwind[key][value],
     };
   }
 
@@ -213,12 +239,22 @@ class PaletteWebpackPlugin {
    * Returns a title cased string.
    *
    * @param {String} value
-   * @param {String} description
+   * @param {String} key
    */
-  title(value, description) {
+  title(value, key) {
+    if (
+      _.isObject(this.options.tailwind.shades) &&
+      this.options.tailwind.shades.hasOwnProperty(key)
+    ) {
+      return _.isEmpty(this.options.tailwind.shades[key])
+        ? _.startCase(_.camelCase(value))
+        : `${this.options.tailwind.shades[key]} ${_.startCase(
+            _.camelCase(value)
+          )}`;
+    }
+
     return (
-      _.startCase(_.camelCase(value)) +
-      (description ? ` (${this.title(description)})` : '')
+      _.startCase(_.camelCase(value)) + (key ? ` (${this.title(key)})` : "")
     );
   }
 
@@ -230,7 +266,7 @@ class PaletteWebpackPlugin {
   exists(files) {
     if (Array.isArray(files) && files.length) {
       return (this.options.sass.files =
-        files.filter(file => {
+        files.filter((file) => {
           return fs.existsSync(file);
         }) || false);
     }
