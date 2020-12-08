@@ -200,11 +200,11 @@ class PaletteWebpackPlugin {
 
     return {
       name: isNaN(value)
-        ? this.title(value)
+        ? this.title(key, value)
         : this.options.tailwind.shades
         ? this.title(key, value)
         : this.title(key),
-      slug: `${key}-${value}`,
+      slug: `${key}${value === 'DEFAULT' ? '' : `-${value}`}`,
       color: this.tailwind[key][value]
     };
   }
