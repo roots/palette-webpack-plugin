@@ -12,22 +12,25 @@ class PaletteWebpackPlugin {
    * @param {Object} options
    */
   constructor(options) {
-    this.options = _.merge({
-      output: 'palette.json',
-      blacklist: ['transparent', 'inherit'],
-      priority: 'tailwind',
-      pretty: false,
-      tailwind: {
-        config: './tailwind.config.js',
-        shades: false,
-        path: 'colors'
+    this.options = _.merge(
+      {
+        output: 'palette.json',
+        blacklist: ['transparent', 'inherit'],
+        priority: 'tailwind',
+        pretty: false,
+        tailwind: {
+          config: './tailwind.config.js',
+          shades: false,
+          path: 'colors',
+        },
+        sass: {
+          path: 'resources/assets/styles/config',
+          files: ['variables.scss'],
+          variables: ['colors'],
+        },
       },
-      sass: {
-        path: 'resources/assets/styles/config',
-        files: ['variables.scss'],
-        variables: ['colors']
-      }
-    }, options || {});
+      options || {}
+    );
 
     this.palette = this.options.priority.includes('tailwind')
       ? this.build(this.tailwind(), this.sass())
@@ -47,20 +50,23 @@ class PaletteWebpackPlugin {
     );
 
     if (compiler.hooks) {
-      compiler.hooks.emit.tapAsync(this.constructor.name, (compilation, callback) => {
-        Object.assign(compilation.assets, {
-          [this.options.output]: {
-            source() {
-              return palette;
+      compiler.hooks.emit.tapAsync(
+        this.constructor.name,
+        (compilation, callback) => {
+          Object.assign(compilation.assets, {
+            [this.options.output]: {
+              source() {
+                return palette;
+              },
+              size() {
+                return palette.length;
+              },
             },
-            size() {
-              return palette.length;
-            }
-          }
-        });
+          });
 
-        callback();
-      });
+          callback();
+        }
+      );
     }
   }
 
@@ -72,21 +78,25 @@ class PaletteWebpackPlugin {
    * @param {Object} objects
    */
   build(...objects) {
-    const collection = _.uniqBy(
-      _.union(...objects),
-      'name'
-    );
+    const collection = _.uniqBy(_.union(...objects), 'name');
 
-    const [colors, maybeColors] = _.partition(collection, value => !!d3Color(value.color));
-    const [falsePositives, notColors] = _.partition(maybeColors, value =>
+    const [colors, maybeColors] = _.partition(
+      collection,
+      (value) => !!d3Color(value.color)
+    );
+    const [falsePositives, notColors] = _.partition(maybeColors, (value) =>
       /^(?:rgb|hsl)a?\(.+?\)$/i.test(value.color)
     );
-    const [grayscale, notGrayscale] = _.partition(colors, value => this.isGrayscale(value.color) || this.maybeGrayscale(value.color));
+    const [grayscale, notGrayscale] = _.partition(
+      colors,
+      (value) =>
+        this.isGrayscale(value.color) || this.maybeGrayscale(value.color)
+    );
 
     return [
       [...notGrayscale, ...falsePositives, ...notColors],
-      grayscale
-    ].flatMap(color => _.sortBy(color, 'name'));
+      grayscale,
+    ].flatMap((color) => _.sortBy(color, 'name'));
   }
 
   /**
@@ -103,7 +113,7 @@ class PaletteWebpackPlugin {
         : [this.options.sass.path, '/'].join('')
       : null;
 
-    const files = [this.options.sass.files].map(file => {
+    const files = [this.options.sass.files].map((file) => {
       if (this.exists([paths, file].join(''))) {
         return [paths, file].join('');
       }
@@ -113,19 +123,28 @@ class PaletteWebpackPlugin {
       return;
     }
 
-    const variables = require('sass-export').exporter({ inputFiles: files }).getArray();
+    const variables = require('sass-export')
+      .exporter({ inputFiles: files })
+      .getArray();
 
     if (!variables.length) {
       return;
     }
 
-    return variables.filter(key =>
-      [this.options.sass.variables].some(
-        value => key.name === (_.startsWith(value, '$') ? value : ['$', value].join(''))
-      ) && key.mapValue
-    ).flatMap(colors =>
-      colors.mapValue.map(color => this.transform(color.name, color.compiledValue, true))
-    );
+    return variables
+      .filter(
+        (key) =>
+          [this.options.sass.variables].some(
+            (value) =>
+              key.name ===
+              (_.startsWith(value, '$') ? value : ['$', value].join(''))
+          ) && key.mapValue
+      )
+      .flatMap((colors) =>
+        colors.mapValue.map((color) =>
+          this.transform(color.name, color.compiledValue, true)
+        )
+      );
   }
 
   /**
@@ -147,7 +166,7 @@ class PaletteWebpackPlugin {
     );
 
     return Object.keys(this.tailwind)
-      .flatMap(key => {
+      .flatMap((key) => {
         if (!key || this.options.blacklist.includes(key)) {
           return;
         }
@@ -162,16 +181,26 @@ class PaletteWebpackPlugin {
         ) {
           return this.transform(key, '500');
         }
-      
+
         if (_.isArray(this.options.tailwind.shades)) {
           return Object.keys(this.tailwind[key])
-            .filter(value => this.options.tailwind.shades.includes(value))
-            .map(value => this.transform(key, value));
+            .filter((value) => this.options.tailwind.shades.includes(value))
+            .map((value) => this.transform(key, value));
         }
 
-        return Object.keys(this.tailwind[key]).map(value => this.transform(key, value));
+        if (_.isObject(this.options.tailwind.shades)) {
+          return Object.keys(this.tailwind[key])
+            .filter((value) =>
+              Object.keys(this.options.tailwind.shades).includes(value)
+            )
+            .map((value) => this.transform(key, value));
+        }
+
+        return Object.keys(this.tailwind[key]).map((value) =>
+          this.transform(key, value)
+        );
       })
-      .filter(value => !!value);
+      .filter((value) => !!value);
   }
 
   /**
@@ -186,7 +215,7 @@ class PaletteWebpackPlugin {
       return {
         name: this.title(key),
         slug: key,
-        color: value
+        color: value,
       };
     }
 
@@ -194,18 +223,18 @@ class PaletteWebpackPlugin {
       return {
         name: this.title(key),
         slug: key,
-        color: this.tailwind[key]
+        color: this.tailwind[key],
       };
     }
 
     return {
       name: isNaN(value)
-        ? this.title(key, value)
+        ? this.title(value)
         : this.options.tailwind.shades
         ? this.title(key, value)
         : this.title(key),
-      slug: `${key}${value === 'DEFAULT' ? '' : `-${value}`}`,
-      color: this.tailwind[key][value]
+      slug: `${key}-${value}`,
+      color: this.tailwind[key][value],
     };
   }
 
@@ -216,9 +245,18 @@ class PaletteWebpackPlugin {
    * @param {String} description
    */
   title(value, description) {
+    value = _.startCase(_.camelCase(value));
+
+    if (
+      !_.isEmpty(description) &&
+      _.isObject(this.options.tailwind.shades) &&
+      _.has(this.options.tailwind.shades, description)
+    ) {
+      return _.trim(`${this.options.tailwind.shades[description]} ${value}`);
+    }
+
     return (
-      _.startCase(_.camelCase(value)) +
-      (description ? ` (${this.title(description)})` : '')
+      value + (!_.isEmpty(description) ? ` (${this.title(description)})` : '')
     );
   }
 
@@ -230,7 +268,7 @@ class PaletteWebpackPlugin {
   exists(files) {
     if (Array.isArray(files) && files.length) {
       return (this.options.sass.files =
-        files.filter(file => {
+        files.filter((file) => {
           return fs.existsSync(file);
         }) || false);
     }
