@@ -87,13 +87,13 @@ module.exports = {
       tailwind: {
         config: './tailwind.config.js',
         shades: false,
-        path: 'colors'
+        path: 'colors',
       },
       sass: {
         path: 'resources/assets/styles/config',
         files: ['variables.scss'],
-        variables: ['colors']
-      }
+        variables: ['colors'],
+      },
     }),
   ],
 };
@@ -130,20 +130,20 @@ mix.palette(options);
 
 ### Options
 
-|        Name       	|     Type    	|               Default              	| Description                                                                                          	|
-|:-----------------:	|:-----------:	|:----------------------------------:	|------------------------------------------------------------------------------------------------------	|
-|      `output`     	|  `{String}` 	|          `'palette.json'`          	| The filename and path relative to the public path.                                                   	|
-|    `blacklist`    	|  `{Array}`  	|     `['transparent, 'inherit']`    	| Globs to ignore colors.                                                                              	|
-|     `priority`    	|  `{String}` 	|            `'tailwind'`            	| Priority when merging non-unique colors while using both Tailwind and Sass.                           	|
-|      `pretty`     	| `{Boolean}` 	|               `false`              	| Use pretty formatting when writing the JSON file.                                                    	|
-|     `tailwind`    	|  `{Object}` 	|              `{ ... }`             	| Set Tailwind options. (See below)                                                                    	|
-| `tailwind.config` 	|  `{String}` 	|      `'./tailwind.config.js'`      	| Path to the Tailwind configuration file relative to the project root path.                           	|
-| `tailwind.shades` 	| `{Array\|Boolean}` 	|               `false`              	| While set to `true`, every color shade (`100-900`) will be generated. Optionally, you may pass an array of shades. When set to `false`, only `500` is used. 	|
-| `tailwind.path` 	| `{String}` 	|               `'colors'`              	| Path to Tailwind config values for palette colors in dot notation. Uses Tailwind's color palette `theme('colors')` per default. 	|
-|       `sass`      	|  `{Object}` 	|              `{ ... }`             	| Set Sass options. (See below)                                                                        	|
-|    `sass.path`    	|  `{String}` 	| `'resources/assets/styles/config'` 	| Path to Sass variable files relative to the project root path.                                       	|
-|    `sass.files`   	|  `{Array}`  	|        `['variables.scss']`        	| An array of files to search for the defined Sass variables.                                          	|
-|  `sass.variables` 	|  `{Array}`  	|            `['colors']`            	| An array of Sass variables (with or without `$`) to use for the color palette.                       	|
+|       Name        |            Type            |              Default               | Description                                                                                                                                                                                                                                                                                  |
+| :---------------: | :------------------------: | :--------------------------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `output`      |         `{String}`         |          `'palette.json'`          | The filename and path relative to the public path.                                                                                                                                                                                                                                           |
+|    `blacklist`    |         `{Array}`          |    `['transparent, 'inherit']`     | Globs to ignore colors.                                                                                                                                                                                                                                                                      |
+|    `priority`     |         `{String}`         |            `'tailwind'`            | Priority when merging non-unique colors while using both Tailwind and Sass.                                                                                                                                                                                                                  |
+|     `pretty`      |        `{Boolean}`         |              `false`               | Use pretty formatting when writing the JSON file.                                                                                                                                                                                                                                            |
+|    `tailwind`     |         `{Object}`         |             `{ ... }`              | Set Tailwind options. (See below)                                                                                                                                                                                                                                                            |
+| `tailwind.config` |         `{String}`         |      `'./tailwind.config.js'`      | Path to the Tailwind configuration file relative to the project root path.                                                                                                                                                                                                                   |
+| `tailwind.shades` | `{Object\|Array\|Boolean}` |              `false`               | While set to `true`, every color shade (`100-900`) will be generated. When set to `false`, only `500` will be used. Optionally, you may define either an array of shades as strings `['50', '100', '500']` or an object containing shade labels `{50: 'Lightest', 100: 'Lighter', 500: ''}`. |
+|  `tailwind.path`  |         `{String}`         |             `'colors'`             | Path to Tailwind config values for palette colors in dot notation. Uses Tailwind's color palette `theme('colors')` per default.                                                                                                                                                              |
+|      `sass`       |         `{Object}`         |             `{ ... }`              | Set Sass options. (See below)                                                                                                                                                                                                                                                                |
+|    `sass.path`    |         `{String}`         | `'resources/assets/styles/config'` | Path to Sass variable files relative to the project root path.                                                                                                                                                                                                                               |
+|   `sass.files`    |         `{Array}`          |        `['variables.scss']`        | An array of files to search for the defined Sass variables.                                                                                                                                                                                                                                  |
+| `sass.variables`  |         `{Array}`          |            `['colors']`            | An array of Sass variables (with or without `$`) to use for the color palette.                                                                                                                                                                                                               |
 
 ### WordPress
 
@@ -170,7 +170,7 @@ add_action('after_setup_theme', function () {
 
 #### Sage 10
 
-When using Sage 10, you can take advantage of the `asset()` helper to fetch the palette. A good place for doing this would be in `setup.php` with the other `add_theme_support()` options.                  
+When using Sage 10, you can take advantage of the `asset()` helper to fetch the palette. A good place for doing this would be in `setup.php` with the other `add_theme_support()` options.
 
 ```php
 /**
@@ -201,7 +201,11 @@ would be transformed to:
 ```json
 [
   { "name": "Blue", "slug": "blue", "color": "#4287f5" },
-  { "name": "Not Actually Black", "slug": "not-actually-black", "color": "#42f596" },
+  {
+    "name": "Not Actually Black",
+    "slug": "not-actually-black",
+    "color": "#42f596"
+  },
   { "name": "Orange", "slug": "orange", "color": "#f5b342" },
   { "name": "Red", "slug": "red", "color": "#f54242" },
   { "name": "Black", "slug": "black", "color": "#111" },
@@ -224,11 +228,11 @@ Contributions are welcome from everyone. We have [contributing guidelines](https
 
 Keep track of development and community news.
 
-* Participate on the [Roots Discourse](https://discourse.roots.io/)
-* Follow [@rootswp on Twitter](https://twitter.com/rootswp)
-* Read and subscribe to the [Roots Blog](https://roots.io/blog/)
-* Subscribe to the [Roots Newsletter](https://roots.io/subscribe/)
-* Listen to the [Roots Radio podcast](https://roots.io/podcast/)
+- Participate on the [Roots Discourse](https://discourse.roots.io/)
+- Follow [@rootswp on Twitter](https://twitter.com/rootswp)
+- Read and subscribe to the [Roots Blog](https://roots.io/blog/)
+- Subscribe to the [Roots Newsletter](https://roots.io/subscribe/)
+- Listen to the [Roots Radio podcast](https://roots.io/podcast/)
 
 ## License
 
