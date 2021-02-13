@@ -17,8 +17,8 @@
     <img alt="Total Downloads" src="https://img.shields.io/npm/dt/palette-webpack-plugin?style=flat-square" />
   </a>
 
-   <a href="https://circleci.com/gh/roots/palette-webpack-plugin/">
-    <img alt="Build Status" src="https://img.shields.io/circleci/build/github/roots/palette-webpack-plugin?style=flat-square" />
+   <a href="https://github.com/roots/palette-webpack-plugin/actions">
+    <img alt="Build Status" src="https://img.shields.io/github/workflow/status/roots/palette-webpack-plugin/Main?style=flat-square" />
   </a>
 
   <a href="https://twitter.com/rootswp">
