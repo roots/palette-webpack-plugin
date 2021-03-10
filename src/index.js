@@ -227,6 +227,14 @@ class PaletteWebpackPlugin {
       };
     }
 
+    if ('default' == value.toLowerCase()) {
+      return {
+        name: this.title(key),
+        slug: key,
+        color: this.tailwind[key][value],
+      };
+    }
+
     return {
       name: this.options.tailwind.shades
         ? this.title(key, value)
