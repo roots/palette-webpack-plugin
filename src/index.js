@@ -4,6 +4,7 @@ const _ = require('lodash');
 
 const { color: d3Color } = require('d3-color');
 const { hsv: d3Hsv } = require('d3-hsv');
+const { exit } = require('process');
 
 class PaletteWebpackPlugin {
   /**
@@ -15,6 +16,8 @@ class PaletteWebpackPlugin {
     this.options = _.merge(
       {
         output: 'palette.json',
+        output_prepend: '',
+        wp_theme_json: false,
         blacklist: ['transparent', 'inherit'],
         priority: 'tailwind',
         pretty: false,
@@ -37,24 +40,58 @@ class PaletteWebpackPlugin {
       : this.build(this.sass(), this.tailwind());
   }
 
+  process_wp_theme_json(palette, theme_json_file) {
+
+    if (fs.existsSync(theme_json_file)) {
+      let rawdata = fs.readFileSync(theme_json_file)
+      var theme_json = JSON.parse(rawdata)
+    } else {
+      var theme_json = {
+        'version': 1,
+        'settings': {
+          'color': {
+          }
+        }
+      }
+    }
+
+    if ("undefined" == typeof theme_json.settings) theme_json.settings = {}
+    if ("undefined" == typeof theme_json.settings.color) theme_json.settings.color = {}
+
+    theme_json.settings.color.palette = palette
+    return theme_json
+  }
+
   /**
    * Add Palette to the webpack build process.
    *
    * @param {Object} compiler
    */
   apply(compiler) {
-    const palette = JSON.stringify(
-      this.palette,
-      null,
-      this.options.pretty ? 2 : null
-    );
+    if (this.options.wp_theme_json) {
+      const theme_json_file = this.options.output == 'theme.json' ? './theme.json' : this.options.output
+      // Build the theme.json format. Force pretty printing if we're using wp_theme_json.
+      var palette = JSON.stringify(
+        this.process_wp_theme_json(this.palette, theme_json_file),
+        null,
+        2
+      );
+    } else {
+      var palette = JSON.stringify(
+        this.palette,
+        null,
+        this.options.pretty ? 2 : null
+      );
+    }
+
+    let output_path = this.options.output_prepend + this.options.output
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapAsync(
         this.constructor.name,
         (compilation, callback) => {
           Object.assign(compilation.assets, {
-            [this.options.output]: {
+            [output_path]: {
               source() {
                 return palette;
               },
@@ -227,11 +264,25 @@ class PaletteWebpackPlugin {
       };
     }
 
+    if (this.options.tailwind.shades) {
+      if ('default' == value.toLowerCase()) {
+        return {
+          name: this.title(key),
+          slug: key,
+          color: this.tailwind[key][value],
+        };
+      }
+
+      return {
+        name: this.title(key, value),
+        slug: `${key}-${value}`,
+        color: this.tailwind[key][value],
+      };
+    }
+
     return {
       name: isNaN(value)
         ? this.title(value)
-        : this.options.tailwind.shades
-        ? this.title(key, value)
         : this.title(key),
       slug: `${key}-${value}`,
       color: this.tailwind[key][value],
