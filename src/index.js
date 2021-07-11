@@ -76,8 +76,6 @@ class PaletteWebpackPlugin {
         null,
         2
       );
-      //Modify the output path to break out of public so we're in the root level for theme.json writing.
-      this.options.output = this.options.output == 'theme.json' ? 'theme.json' : this.options.output
     } else {
       var palette = JSON.stringify(
         this.palette,
