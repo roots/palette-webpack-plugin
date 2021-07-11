@@ -4,6 +4,7 @@ const _ = require('lodash');
 
 const { color: d3Color } = require('d3-color');
 const { hsv: d3Hsv } = require('d3-hsv');
+const { exit } = require('process');
 
 class PaletteWebpackPlugin {
   /**
@@ -15,6 +16,7 @@ class PaletteWebpackPlugin {
     this.options = _.merge(
       {
         output: 'palette.json',
+        wp_theme_json: false,
         blacklist: ['transparent', 'inherit'],
         priority: 'tailwind',
         pretty: false,
@@ -37,17 +39,51 @@ class PaletteWebpackPlugin {
       : this.build(this.sass(), this.tailwind());
   }
 
+  process_wp_theme_json(palette, theme_json_file) {
+
+    if (fs.existsSync(theme_json_file)) {
+      let rawdata = fs.readFileSync(theme_json_file)
+      var theme_json = JSON.parse(rawdata)
+    } else {
+      var theme_json = {
+        'version': 1,
+        'settings': {
+          'color': {
+          }
+        }
+      }
+    }
+
+    if ("undefined" == typeof theme_json.settings) theme_json.settings = {}
+    if ("undefined" == typeof theme_json.settings.color) theme_json.settings.color = {}
+
+    theme_json.settings.color.palette = palette
+    return theme_json
+  }
+
   /**
    * Add Palette to the webpack build process.
    *
    * @param {Object} compiler
    */
   apply(compiler) {
-    const palette = JSON.stringify(
-      this.palette,
-      null,
-      this.options.pretty ? 2 : null
-    );
+    if (this.options.wp_theme_json) {
+      const theme_json_file = this.options.output == 'theme.json' ? './theme.json' : this.options.output
+      // Build the theme.json format. Force pretty printing if we're using wp_theme_json.
+      var palette = JSON.stringify(
+        this.process_wp_theme_json(this.palette, theme_json_file),
+        null,
+        2
+      );
+      //Modify the output path to break out of public so we're in the root level for theme.json writing.
+      this.options.output = this.options.output == 'theme.json' ? '../theme.json' : this.options.output
+    } else {
+      var palette = JSON.stringify(
+        this.palette,
+        null,
+        this.options.pretty ? 2 : null
+      );
+    }
 
     if (compiler.hooks) {
       compiler.hooks.emit.tapAsync(
