@@ -16,6 +16,7 @@ class PaletteWebpackPlugin {
     this.options = _.merge(
       {
         output: 'palette.json',
+        output_prepend: '',
         wp_theme_json: false,
         blacklist: ['transparent', 'inherit'],
         priority: 'tailwind',
@@ -76,7 +77,7 @@ class PaletteWebpackPlugin {
         2
       );
       //Modify the output path to break out of public so we're in the root level for theme.json writing.
-      this.options.output = this.options.output == 'theme.json' ? '../theme.json' : this.options.output
+      this.options.output = this.options.output == 'theme.json' ? 'theme.json' : this.options.output
     } else {
       var palette = JSON.stringify(
         this.palette,
@@ -85,12 +86,14 @@ class PaletteWebpackPlugin {
       );
     }
 
+    let output_path = this.options.output_prepend + this.options.output
+
     if (compiler.hooks) {
       compiler.hooks.emit.tapAsync(
         this.constructor.name,
         (compilation, callback) => {
           Object.assign(compilation.assets, {
-            [this.options.output]: {
+            [output_path]: {
               source() {
                 return palette;
               },
