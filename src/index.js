@@ -227,11 +227,25 @@ class PaletteWebpackPlugin {
       };
     }
 
+    if (this.options.tailwind.shades) {
+      if ('default' == value.toLowerCase()) {
+        return {
+          name: this.title(key),
+          slug: key,
+          color: this.tailwind[key][value],
+        };
+      }
+
+      return {
+        name: this.title(key, value),
+        slug: `${key}-${value}`,
+        color: this.tailwind[key][value],
+      };
+    }
+
     return {
       name: isNaN(value)
         ? this.title(value)
-        : this.options.tailwind.shades
-        ? this.title(key, value)
         : this.title(key),
       slug: `${key}-${value}`,
       color: this.tailwind[key][value],

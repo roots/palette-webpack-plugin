@@ -29,7 +29,7 @@
     "d3-color": "^2.0.0",
     "d3-hsv": "^0.1.0",
     "lodash": "^4.17.20",
-    "sass-export": "^1.0.6"
+    "sass-export": "^2.1.0"
   },
   "peerDependencies": {
     "webpack": "^4.0.0 || ^5.0.0"
