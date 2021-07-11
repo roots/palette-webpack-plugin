@@ -81,6 +81,7 @@ module.exports = {
   plugins: [
     new PalettePlugin({
       output: 'palette.json',
+      wp_theme_json: false,
       blacklist: ['transparent', 'inherit'],
       priority: 'tailwind',
       pretty: false,
@@ -133,6 +134,7 @@ mix.palette(options);
 |       Name        |            Type            |              Default               | Description                                                                                                                                                                                                                                                                                  |
 | :---------------: | :------------------------: | :--------------------------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |     `output`      |         `{String}`         |          `'palette.json'`          | The filename and path relative to the public path.                                                                                                                                                                                                                                           |
+|     `wp_theme_json`      |         `{Boolean}`         |          `false`          | Output the palette to WordPress 5.8's theme.json file. If enabled, the palette will replace the "settings.color.palette" property of the output file. If the output file does not exist, it will be created with a skeleton theme.json format. If this option is enabled and output is set to `theme.json`, the output will automatically be moved out of /public to the root level of the theme.                                                                                                                                                                                                                                           |
 |    `blacklist`    |         `{Array}`          |    `['transparent, 'inherit']`     | Globs to ignore colors.                                                                                                                                                                                                                                                                      |
 |    `priority`     |         `{String}`         |            `'tailwind'`            | Priority when merging non-unique colors while using both Tailwind and Sass.                                                                                                                                                                                                                  |
 |     `pretty`      |        `{Boolean}`         |              `false`               | Use pretty formatting when writing the JSON file.                                                                                                                                                                                                                                            |
@@ -146,6 +148,11 @@ mix.palette(options);
 | `sass.variables`  |         `{Array}`          |            `['colors']`            | An array of Sass variables (with or without `$`) to use for the color palette.                                                                                                                                                                                                               |
 
 ### WordPress
+
+#### WordPress 5.8+
+WordPress 5.8 supports a [new theme.json configuration file](https://make.wordpress.org/core/2021/06/25/introducing-theme-json-in-wordpress-5-8/) which can automatically load the palette for you from a json file.
+
+If you enable the `wp_theme_json` option, and set `output` to `theme.json`, this plugin will automatically build your palette and write it to that file, no `add_theme_support` required, and you get the added benefit of the right classes for block editor support built for you by WordPress.
 
 #### Vanilla WordPress
 
