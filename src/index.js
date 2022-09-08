@@ -50,9 +50,9 @@ class PaletteWebpackPlugin {
     );
 
     if (compiler.hooks) {
-      compiler.hooks.emit.tapAsync(
+      compiler.hooks.thisCompilation.tap(
         this.constructor.name,
-        (compilation, callback) => {
+        (compilation) => {
           Object.assign(compilation.assets, {
             [this.options.output]: {
               source() {
@@ -63,8 +63,6 @@ class PaletteWebpackPlugin {
               },
             },
           });
-
-          callback();
         }
       );
     }
