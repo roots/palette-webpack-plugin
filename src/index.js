@@ -51,7 +51,23 @@ class PaletteWebpackPlugin {
     );
 
     if (compiler.hooks) {
-      if (webpack.version.startsWith('4')) {
+      if (webpack.version.startsWith('5')) {
+        compiler.hooks.thisCompilation.tap(
+          this.constructor.name,
+          (compilation) => {
+            Object.assign(compilation.assets, {
+              [this.options.output]: {
+                source() {
+                  return palette;
+                },
+                size() {
+                  return palette.length;
+                },
+              },
+            });
+          }
+        );
+      } else {
         compiler.hooks.emit.tapAsync(
           this.constructor.name,
           (compilation, callback) => {
@@ -67,22 +83,6 @@ class PaletteWebpackPlugin {
             });
 
             callback();
-          }
-        );
-      } else {
-        compiler.hooks.thisCompilation.tap(
-          this.constructor.name,
-          (compilation) => {
-            Object.assign(compilation.assets, {
-              [this.options.output]: {
-                source() {
-                  return palette;
-                },
-                size() {
-                  return palette.length;
-                },
-              },
-            });
           }
         );
       }
