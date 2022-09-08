@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const webpack = require('webpack');
 const _ = require('lodash');
 
 const { color: d3Color } = require('d3-color');
@@ -50,23 +51,41 @@ class PaletteWebpackPlugin {
     );
 
     if (compiler.hooks) {
-      compiler.hooks.emit.tapAsync(
-        this.constructor.name,
-        (compilation, callback) => {
-          Object.assign(compilation.assets, {
-            [this.options.output]: {
-              source() {
-                return palette;
+      if (webpack.version.startsWith('5')) {
+        compiler.hooks.thisCompilation.tap(
+          this.constructor.name,
+          (compilation) => {
+            Object.assign(compilation.assets, {
+              [this.options.output]: {
+                source() {
+                  return palette;
+                },
+                size() {
+                  return palette.length;
+                },
               },
-              size() {
-                return palette.length;
+            });
+          }
+        );
+      } else {
+        compiler.hooks.emit.tapAsync(
+          this.constructor.name,
+          (compilation, callback) => {
+            Object.assign(compilation.assets, {
+              [this.options.output]: {
+                source() {
+                  return palette;
+                },
+                size() {
+                  return palette.length;
+                },
               },
-            },
-          });
+            });
 
-          callback();
-        }
-      );
+            callback();
+          }
+        );
+      }
     }
   }
 
